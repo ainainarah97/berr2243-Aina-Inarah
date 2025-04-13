@@ -85,7 +85,7 @@ async function main() {
         console.log(before);
 
         //task 5
-        const updateResult = await driverCollection.updateMany(
+        const updateResult = await driverCollection.updateMany( //modified question
             {}, // empty filter updates all
             { $inc: { rating: 0.1 } }
         );
@@ -106,7 +106,7 @@ async function main() {
         });
 
         
-        const deleteResult = await driverCollection.deleteMany({ isAvailable: false });
+        const deleteResult = await driverCollection.deleteMany({ isAvailable: false }); //modified question
 
         console.log(`\nDeleted ${deleteResult.deletedCount} unavailable driver(s).`);
 
