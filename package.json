@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/ainainarah97/berr2243-Aina-Inarah#readme",
   "dependencies": {
+    "express": "^5.1.0",
     "mongodb": "^6.15.0"
   }
 }
