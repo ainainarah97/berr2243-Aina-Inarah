@@ -41,7 +41,6 @@ app.get ('/rides', async(req,res) =>{
 app.post('/rides',async(req,res) =>{
     try{
         const result = await db.collection('rides').insertOne(req.body);
-        console.log(result)
         res.status(201).json({id: result.insertedId});
     }catch(err){
         res.status(400).json({error:"Invalid ride data"});
