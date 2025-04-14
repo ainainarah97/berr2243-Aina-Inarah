@@ -37,7 +37,7 @@ app.get ('/rides', async(req,res) =>{
     }
 });
 
-//POST/rides - Create a new ride
+//POST /rides -Create a new ride
 app.post('/rides',async(req,res) =>{
     try{
         const result = await db.collection('rides').insertOne(req.body);
