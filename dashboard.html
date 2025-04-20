@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>E-Hailing Dashboard</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    table { border-collapse: collapse; width: 100%; margin-top: 20px; }
+    th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+    th { background-color: #f4f4f4; }
+    input, button { padding: 8px; margin: 5px; }
+  </style>
+</head>
+<body>
+
+  <h1>E-Hailing Ride Dashboard</h1>
+
+  <h2>Create New Ride</h2>
+  <form id="rideForm">
+    <input type="text" id="pickupLocation" placeholder="Pickup Location" required>
+    <input type="text" id="destination" placeholder="Destination" required>
+    <input type="text" id="driverId" placeholder="Driver ID" required>
+    <button type="submit">Create Ride</button>
+  </form>
+
+  <h2>Ride List</h2>
+  <table id="ridesTable">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Pickup</th>
+        <th>Destination</th>
+        <th>Driver ID</th>
+        <th>Status</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <script>
+    const apiUrl = 'http://localhost:3000/rides';
+
+    // Load rides on page load
+    window.onload = loadRides;
+
+    function loadRides() {
+      fetch(apiUrl)
+        .then(res => res.json())
+        .then(data => {
+          const tbody = document.querySelector('#ridesTable tbody');
+          tbody.innerHTML = '';
+          data.forEach(ride => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+              <td>${ride._id}</td>
+              <td>${ride.pickupLocation}</td>
+              <td>${ride.destination}</td>
+              <td>${ride.driverId}</td>
+              <td>${ride.status}</td>
+              <td>
+                <button onclick="cancelRide('${ride._id}')">Cancel</button>
+                <button onclick="deleteRide('${ride._id}')">Delete</button>
+              </td>
+            `;
+            tbody.appendChild(row);
+          });
+        });
+    }
+
+    // Create a new ride
+    document.getElementById('rideForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const ride = {
+        pickupLocation: document.getElementById('pickupLocation').value,
+        destination: document.getElementById('destination').value,
+        driverId: document.getElementById('driverId').value,
+        status: 'requested'
+      };
+      fetch(apiUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(ride)
+      })
+      .then(() => {
+        loadRides();
+        this.reset();
+      });
+    });
+
+    // Cancel a ride
+    function cancelRide(id) {
+      fetch(`${apiUrl}/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: 'cancelled' })
+      }).then(loadRides);
+    }
+
+    // Delete a ride
+    function deleteRide(id) {
+      fetch(`${apiUrl}/${id}`, { method: 'DELETE' })
+        .then(loadRides);
+    }
+  </script>
+
+</body>
+</html>
